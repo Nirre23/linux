@@ -1,0 +1,46 @@
+#!/bin/bash
+# location: /usr/local/sbin/user_mngt
+# location ref: https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s09.html
+
+# Kontrollera att exakt ett argument (CSV-fil) skickas in
+if [ $# -ne 1 ]; then
+    echo "Fel: Ange exakt en CSV-fil som argument." >&2
+    echo "Användning: $0 <csvfil>" >&2
+    exit 1
+fi
+
+csvfile="$1"
+logfile="loggfil.txt"
+
+# Kontrollera att argumentet är en vanlig fil
+if [ ! -f "$csvfile" ]; then
+    echo "Fel: $csvfile är inte en vanlig fil." >&2
+    exit 1
+fi
+
+
+# Läs CSV-fil rad för rad
+# Format: förnamn,efternamn,lösenord,operation
+while IFS=, read -r firstname lastname password operation
+do
+    # Hoppa över tomma rader
+    [ -z "$firstname" ] && continue
+
+    # Skapa kontonamn: tre första tecken i förnamn + tre första i efternamn
+    username="${firstname:0:3}${lastname:0:3}"
+
+    # Endast hantera add-operationer
+    if [ "$operation" = "add" ]; then
+        # Kolla om användaren redan finns
+        if id "$username" >/dev/null 2>&1; then
+            echo "Fel: Användaren $username finns redan." >&2
+        else
+            if adduser --disabled-password --gecos "$firstname $lastname" "$username" >/dev/null 2>&1; then
+                echo "Add: $username"
+                echo "Add: $username" >> "$logfile"
+            else
+                echo "Fel: Kunde inte skapa användare $username." >&2
+            fi
+        fi
+    fi
+done < "$csvfile"
