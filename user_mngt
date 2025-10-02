@@ -2,6 +2,9 @@
 # location: /usr/local/sbin/user_mngt
 # location ref: https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s09.html
 
+# Gör filen körbar först: chmod +x user_mngt
+# Kör sedan: ./user_mngt. indata.csv
+
 # Kontrollera att exakt ett argument (CSV-fil) skickas in
 if [ $# -ne 1 ]; then
     echo "Fel: Ange exakt en CSV-fil som argument." >&2
