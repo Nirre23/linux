@@ -8,12 +8,13 @@
 # Kontrollera att exakt ett argument (CSV-fil) skickas in
 if [ $# -ne 1 ]; then
     echo "Fel: Ange exakt en CSV-fil som argument." >&2
-    echo "Användning: $0 <csvfil>" >&2
+    echo "Använd: $0 <csvfil>" >&2
     exit 1
 fi
 
+
 csvfile="$1"
-logfile="loggfil.txt"
+logfile="loggfil.txt" # Loggfil för skapade användare
 
 # Kontrollera att argumentet är en vanlig fil
 if [ ! -f "$csvfile" ]; then
